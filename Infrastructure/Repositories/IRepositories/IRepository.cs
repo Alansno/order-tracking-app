@@ -11,9 +11,9 @@ namespace Infrastructure.Repositories.IRepositories
     {
         Task<Result<M>> Save(M model);
         Task<Result<bool>> Update(M model);
-        Task<Result<bool>> Delete(int Id);
-        Task<Result<bool>> SoftDelete(int Id);
-        Task<Result<M>> FindById(int Id);
+        Task<Result<bool>> Delete(int id);
+        Task<Result<bool>> SoftDelete(int id);
+        Task<Result<M>> FindById(int id);
         IQueryable<M> GetAll();
     }
 }

@@ -13,7 +13,13 @@ namespace Infrastructure
     public static class InfrastructureDependencyInjection
     {
         public static IServiceCollection AddRepositories(this IServiceCollection services)
-            => services.AddScoped<IRepository<UserEntity>, UserRepository>();
+            => services.AddDeliveryManRepository().AddPackageRepository();
+
+        private static IServiceCollection AddDeliveryManRepository(this IServiceCollection services)
+            => services.AddScoped<IRepository<DeliveryManEntity>, DeliveryManRepository>();
+        
+        private static IServiceCollection AddPackageRepository(this IServiceCollection services)
+            => services.AddScoped<IRepository<PackageEntity>, PackageRepository>();
 
     }
 }

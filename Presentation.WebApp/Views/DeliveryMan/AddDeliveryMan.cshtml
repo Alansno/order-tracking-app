@@ -1,0 +1,34 @@
+@model Application.DeliveryMan.Dtos.DeliveryManRequest
+
+@{
+    ViewData["Title"] = "Añadir repartidor";
+}
+
+@if (ViewData["Message"] != null)
+{
+<div class="alert alert-success">
+    @ViewData["Message"]
+</div>
+}
+
+<h1 class="text-center fw-bold">Añadir repartidor</h1>
+<div class="d-flex justify-content-center">
+    <form asp-action="Store" class="row g-3 needs-validation w-50">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="NameDelivery" class="form-label">Nombre:</label>
+            <input asp-for="NameDelivery" type="text" class="form-control" id="validationCustom01" value="Juan" required>
+            <span asp-validation-for="NameDelivery" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="NumPackages" class="form-label">Cantidad de paquetes:</label>
+            <input asp-for="NumPackages" type="number" class="form-control" id="validationCustom02" value="5" required>
+            <span asp-validation-for="NumPackages" class="text-danger"></span>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-primary" type="submit">Guardar</button>
+        </div>
+    </form>
+</div>

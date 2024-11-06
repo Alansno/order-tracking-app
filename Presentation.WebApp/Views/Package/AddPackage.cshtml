@@ -1,0 +1,37 @@
+@model Application.Package.Dtos.PackageRequest
+
+@{
+    ViewData["Title"] = "Añadir paquete";
+}
+
+@if (ViewData["Message"] != null)
+{
+<div class="alert alert-success">
+    @ViewData["Message"]
+</div>
+}
+
+@if (ViewData["ErrorMessage"] != null)
+{
+<div class="alert alert-danger">
+    @ViewData["ErrorMessage"]
+</div>
+}
+
+<h1 class="text-center fw-bold">Añadir paquete</h1>
+<div class="d-flex justify-content-center">
+    <form asp-action="Store" class="row g-3 needs-validation w-50">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="Code" class="form-label">Codigo:</label>
+            <input asp-for="Code" type="text" class="form-control" id="validationCustom01" value="JSCUEUNS929" required>
+            <span asp-validation-for="Code" class="text-danger"></span>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-primary" type="submit">Guardar</button>
+        </div>
+    </form>
+</div>
+
+
