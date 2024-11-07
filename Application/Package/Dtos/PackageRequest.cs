@@ -8,4 +8,6 @@ public class PackageRequest
     [Required]
     public string Code { get; set; }
     public int? ShippingId { get; set; }
+    [Required]
+    public int CityId { get; set; }
 }

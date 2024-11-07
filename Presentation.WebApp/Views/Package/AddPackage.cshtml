@@ -1,4 +1,8 @@
+@using Application.City.Commands
+@using Application.Package.Commands
 @model Application.Package.Dtos.PackageRequest
+@inject GetPackages GetPackages
+@inject GetCities GetCities
 
 @{
     ViewData["Title"] = "Añadir paquete";
@@ -18,6 +22,11 @@
 </div>
 }
 
+@{
+    var packages = await GetPackages.Execute();
+    var cities = await GetCities.Execute();
+}
+
 <h1 class="text-center fw-bold">Añadir paquete</h1>
 <div class="d-flex justify-content-center">
     <form asp-action="Store" class="row g-3 needs-validation w-50">
@@ -27,11 +36,60 @@
             <input asp-for="Code" type="text" class="form-control" id="validationCustom01" value="JSCUEUNS929" required>
             <span asp-validation-for="Code" class="text-danger"></span>
         </div>
+        
+        <div class="mb-3">
+            <select asp-for="CityId" class="form-select" aria-label="Default select example">
+                <option selected>Seleccionar ciudad</option>
+                @if (cities.IsSuccess && cities.Value.Count() != 0)
+                {
+                    @foreach (var city in cities.Value)
+                    {
+                        <option value="@city.Id">@city.CityName</option>
+                    }
+                }
+                <option value="">No hay ciudades</option>
+            </select>
+        </div>
 
         <div class="text-center">
             <button class="btn btn-primary" type="submit">Guardar</button>
         </div>
     </form>
+</div>
+
+<h3 class="text-center fw-bold mt-5">Todos los paquetes</h3>
+
+<div class="d-flex justify-content-center mt-3">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Codigo</th>
+            <th scope="col">Envío</th>
+            <th scope="col">Acciones</th>
+            <th scope="col">Agregar productos</th>
+        </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            @if (packages.IsSuccess && packages.Value.Count != 0)
+            {
+                @foreach (var package in packages.Value)
+                {
+                    var des = package.Destination ?? "No asignado";
+                    <tr>
+                        <td>@package.Id</td>
+                        <td>@package.Code</td>
+                        <td>@des</td>
+                        <td>editar - eliminar</td>
+                        <td>Agregar</td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td>No hay paquetes</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 

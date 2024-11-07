@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.City;
+using Application.City.Commands;
+using Application.City.Mappers;
 using Application.DeliveryMan;
 using Application.DeliveryMan.Commands;
 using Application.DeliveryMan.Mappers;
@@ -16,7 +19,9 @@ namespace Application
     public static class ApplicationDependencyInjection
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
-            => services.AddDeliveryManUsesCases().AddDeliveryManMappers().AddPackageUseCases().AddPackageMappers();
+            => services.AddDeliveryManUsesCases().AddDeliveryManMappers()
+                .AddPackageUseCases().AddPackageMappers()
+                .AddCityUseCases().AddCityMappers();
         
         private static IServiceCollection AddDeliveryManUsesCases(this IServiceCollection services)
             => services.AddScoped<DeliveryManUseCases>()
@@ -24,13 +29,22 @@ namespace Application
         
         private static IServiceCollection AddPackageUseCases(this IServiceCollection services)
             => services.AddScoped<PackageUseCases>()
-                .AddScoped<AddPackage>();
+                .AddScoped<AddPackage>()
+                .AddScoped<GetPackages>();
+        
+        private static IServiceCollection AddCityUseCases(this IServiceCollection services)
+            => services.AddScoped<CityUseCases>()
+                .AddScoped<AddCity>()
+                .AddScoped<GetCities>();
 
         private static IServiceCollection AddDeliveryManMappers(this IServiceCollection services)
             => services.AddScoped<DeliveryManMapper>();
 
         private static IServiceCollection AddPackageMappers(this IServiceCollection services)
             => services.AddScoped<PackageMapper>();
+        
+        private static IServiceCollection AddCityMappers(this IServiceCollection services)
+            => services.AddScoped<CityMapper>();
 
     }
 }
