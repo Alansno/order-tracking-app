@@ -11,6 +11,7 @@ public class PackageMapper
         {
             Code = request.Code,
             ShippingId = request.ShippingId,
+            CityId = request.CityId
         };
     }
 
@@ -20,7 +21,7 @@ public class PackageMapper
         {
             Id = response.Id,
             Code = response.Code,
-            Destination = response.Destination
+            CityName = response.CityName
         };
     }
 

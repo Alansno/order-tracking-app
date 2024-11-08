@@ -13,6 +13,9 @@ using Application.DeliveryMan.Mappers;
 using Application.Package;
 using Application.Package.Commands;
 using Application.Package.Mappers;
+using Application.Product;
+using Application.Product.Commands;
+using Application.Product.Mappers;
 
 namespace Application
 {
@@ -21,7 +24,8 @@ namespace Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
             => services.AddDeliveryManUsesCases().AddDeliveryManMappers()
                 .AddPackageUseCases().AddPackageMappers()
-                .AddCityUseCases().AddCityMappers();
+                .AddCityUseCases().AddCityMappers()
+                .AddProductUseCases().AddProductMappers();
         
         private static IServiceCollection AddDeliveryManUsesCases(this IServiceCollection services)
             => services.AddScoped<DeliveryManUseCases>()
@@ -36,6 +40,11 @@ namespace Application
             => services.AddScoped<CityUseCases>()
                 .AddScoped<AddCity>()
                 .AddScoped<GetCities>();
+        
+        private static IServiceCollection AddProductUseCases(this IServiceCollection services)
+            => services.AddScoped<ProductUseCases>()
+                .AddScoped<AddProduct>()
+                .AddScoped<GetProducts>();
 
         private static IServiceCollection AddDeliveryManMappers(this IServiceCollection services)
             => services.AddScoped<DeliveryManMapper>();
@@ -45,6 +54,9 @@ namespace Application
         
         private static IServiceCollection AddCityMappers(this IServiceCollection services)
             => services.AddScoped<CityMapper>();
+        
+        private static IServiceCollection AddProductMappers(this IServiceCollection services)
+            => services.AddScoped<ProductMapper>();
 
     }
 }

@@ -1,11 +1,13 @@
 @using Application.City.Commands
 @using Application.Package.Commands
+@using Application.Product.Commands
 @model Application.Package.Dtos.PackageRequest
 @inject GetPackages GetPackages
 @inject GetCities GetCities
+@inject GetProducts GetProducts
 
 @{
-    ViewData["Title"] = "Añadir paquete";
+    ViewData["Title"] = "Paquete";
 }
 
 @if (ViewData["Message"] != null)
@@ -25,9 +27,10 @@
 @{
     var packages = await GetPackages.Execute();
     var cities = await GetCities.Execute();
+    var products = await GetProducts.Execute();
 }
 
-<h1 class="text-center fw-bold">Añadir paquete</h1>
+<h1 class="text-center fw-bold mb-5">Añadir paquete</h1>
 <div class="d-flex justify-content-center">
     <form asp-action="Store" class="row g-3 needs-validation w-50">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -47,7 +50,10 @@
                         <option value="@city.Id">@city.CityName</option>
                     }
                 }
-                <option value="">No hay ciudades</option>
+                else
+                {
+                    <option value="">No hay ciudades</option>
+                }
             </select>
         </div>
 
@@ -65,31 +71,80 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Codigo</th>
-            <th scope="col">Envío</th>
+            <th scope="col">Destino</th>
             <th scope="col">Acciones</th>
             <th scope="col">Agregar productos</th>
         </tr>
         </thead>
         <tbody class="table-group-divider">
-            @if (packages.IsSuccess && packages.Value.Count != 0)
+        @if (packages.IsSuccess && packages.Value.Count != 0)
+        {
+            @foreach (var package in packages.Value)
             {
-                @foreach (var package in packages.Value)
-                {
-                    var des = package.Destination ?? "No asignado";
-                    <tr>
-                        <td>@package.Id</td>
-                        <td>@package.Code</td>
-                        <td>@des</td>
-                        <td>editar - eliminar</td>
-                        <td>Agregar</td>
-                    </tr>
-                }
+                <tr>
+                    <td data-package-id="@package.Id" class="package-id">@package.Id</td>
+                    <td>@package.Code</td>
+                    <td>@package.CityName</td>
+                    <td><a class="btn btn-primary">Editar</a> | <a class="btn btn-danger">Eliminar</a></td>
+                    <td>
+                        <button type="button" class="btn btn-primary agregar-productos-btn" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            Agregar productos
+                        </button>
+                    </td>
+                </tr>
             }
+        }
+        else
+        {
             <tr>
                 <td>No hay paquetes</td>
             </tr>
+        }
         </tbody>
     </table>
 </div>
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="modal-body" class="modal-body">
+                Mostrar los productos aqui
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Seleccionar todos los botones de "Agregar productos"
+    const agregarProductosButtons = document.querySelectorAll('.agregar-productos-btn');
+    const modalElement = document.querySelector('#modal-body');
+
+    // Asignar evento de clic a cada botón
+    agregarProductosButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Obtener el id del paquete desde el `data-package-id` del `td` más cercano
+            const packageId = button.closest('tr').querySelector('.package-id').getAttribute('data-package-id');
+
+            // Limpiar el contenido del modal
+            modalElement.innerHTML = '';
+
+            // Crear y agregar el input con el `packageId` al modal
+            const inputId = document.createElement('input');
+            inputId.value = packageId;
+            inputId.className = 'form-control'; // Puedes agregar más clases para el estilo
+            inputId.readOnly = true; // Opcional: hacer el input de solo lectura
+
+            modalElement.appendChild(inputId);
+        });
+    });
+</script>
 
 

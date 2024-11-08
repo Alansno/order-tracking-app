@@ -1,40 +1,38 @@
-using System.Data;
 using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Custom.ResultPattern;
 using Infrastructure.Repositories.IRepositories;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class PackageRepository : IRepository<PackageEntity>
+public class ProductRepository : IRepository<ProductEntity>
 {
     private readonly OrderTrackingContext _context;
 
-    public PackageRepository(OrderTrackingContext context)
+    public ProductRepository(OrderTrackingContext context)
     {
         _context = context;
     }
     
-    public async Task<Result<PackageEntity>> Save(PackageEntity model)
+    public async Task<Result<ProductEntity>> Save(ProductEntity model)
     {
         try
         {
             if (model == null)
-                return Result<PackageEntity>.Failure("Model was found", System.Net.HttpStatusCode.NotFound);
+                return Result<ProductEntity>.Failure("Model was found", System.Net.HttpStatusCode.NotFound);
 
-            await _context.Packages.AddAsync(model);
+            await _context.Products.AddAsync(model);
             await _context.SaveChangesAsync();
-            return Result<PackageEntity>.Success(model);
+            return Result<ProductEntity>.Success(model);
         }
         catch (DbUpdateException ex)
         {
-            return Result<PackageEntity>.Failure("Something went wrong", System.Net.HttpStatusCode.Conflict);
+            return Result<ProductEntity>.Failure("Something went wrong", System.Net.HttpStatusCode.InternalServerError);
         }
     }
 
-    public Task<Result<bool>> Update(PackageEntity model)
+    public Task<Result<bool>> Update(ProductEntity model)
     {
         throw new NotImplementedException();
     }
@@ -49,13 +47,13 @@ public class PackageRepository : IRepository<PackageEntity>
         throw new NotImplementedException();
     }
 
-    public Task<Result<PackageEntity>> FindById(int id)
+    public Task<Result<ProductEntity>> FindById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public IQueryable<PackageEntity> GetAll()
+    public IQueryable<ProductEntity> GetAll()
     {
-        return _context.Packages;
+        return _context.Products;
     }
 }

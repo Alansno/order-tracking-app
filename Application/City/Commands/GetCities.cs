@@ -21,12 +21,11 @@ public class GetCities
 
     public async Task<Result<IEnumerable<CityResponse>>> Execute()
     {
-        var cities = _cityRepository.GetAll();
-        var resCities = await cities.ToListAsync();
+        var cities = await _cityRepository.GetAll().ToListAsync();
 
-        if (resCities.Count() != 0)
+        if (cities.Count() != 0)
         {
-            return Result<IEnumerable<CityResponse>>.Success(_cityMapper.ToDtoList(resCities.ToList()));
+            return Result<IEnumerable<CityResponse>>.Success(_cityMapper.ToDtoList(cities.ToList()));
         }
 
         return Result<IEnumerable<CityResponse>>.Failure("No cities", HttpStatusCode.NotFound);

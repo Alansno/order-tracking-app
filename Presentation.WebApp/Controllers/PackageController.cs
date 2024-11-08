@@ -23,7 +23,7 @@ public class PackageController : Controller
     
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Store([Bind("Code")] PackageRequest request)
+    public async Task<IActionResult> Store([Bind("Code, CityId")] PackageRequest request)
     {
         if (ModelState.IsValid)
         {

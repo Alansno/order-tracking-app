@@ -29,7 +29,7 @@ public class GetPackages
         var connectionString = _config.GetConnectionString("Connection");
         await using var connection = new SqlConnection(connectionString);
 
-        var sql = @"SELECT p.Id, p.Code, s.Destination FROM Packages p LEFT JOIN Shippings s ON s.Id = p.ShippingId";
+        var sql = @"SELECT p.Id, p.Code, c.CityName FROM Packages p LEFT JOIN Shippings s ON s.Id = p.ShippingId JOIN Cities c ON c.Id = p.CityId";
         var result = await connection.QueryAsync<PackageResponse>(sql);
 
         if (result.Any())
