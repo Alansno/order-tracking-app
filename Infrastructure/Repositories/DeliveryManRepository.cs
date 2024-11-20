@@ -1,11 +1,13 @@
+using System.Linq.Expressions;
 using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Custom.ResultPattern;
 using Infrastructure.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class DeliveryManRepository : IRepository<DeliveryManEntity>
+public class DeliveryManRepository : IRepository<DeliveryManEntity>, ISearchRepository<DeliveryManEntity>, IDeliveryManRepository
 {
     private readonly OrderTrackingContext _context;
     public DeliveryManRepository(OrderTrackingContext context)
@@ -64,5 +66,24 @@ public class DeliveryManRepository : IRepository<DeliveryManEntity>
     public IQueryable<DeliveryManEntity> GetAll()
     {
         return _context.DeliveriesMan;
+    }
+
+    public async Task<Result<IQueryable<DeliveryManEntity>>> FilteredSearch(Expression<Func<DeliveryManEntity, bool>> predicate)
+    {
+        var deliveriesMan = _context.DeliveriesMan.Where(predicate);
+        if (!await deliveriesMan.AnyAsync())
+        {
+            return Result<IQueryable<DeliveryManEntity>>.Failure("No deliveries found", System.Net.HttpStatusCode.NotFound);
+        }
+
+        return Result<IQueryable<DeliveryManEntity>>.Success(deliveriesMan);
+    }
+
+    public async Task<Result<bool>> ChangeAvailability(DeliveryManEntity deliveryMan)
+    {
+        deliveryMan.Availability = false;
+        _context.Entry(deliveryMan).Property(d => d.Availability).IsModified = true;
+        await _context.SaveChangesAsync();
+        return Result<bool>.Success(true);
     }
 }

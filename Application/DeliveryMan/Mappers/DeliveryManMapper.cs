@@ -25,4 +25,9 @@ public class DeliveryManMapper
             NumPackages = entity.NumPackages,
         };
     }
+
+    public List<DeliveryManResponse> ToDtoList(List<DeliveryManEntity> entities)
+    {
+        return entities.Select(ToDto).ToList();
+    }
 }

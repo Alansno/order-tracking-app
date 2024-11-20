@@ -21,7 +21,12 @@ public class ProductMapper
         {
             Id = productEntity.Id,
             NameProduct = productEntity.NameProduct,
+            Package = productEntity.Package,
         };
     }
 
+    public List<ProductResponse> ToDtoList(List<ProductEntity> productEntities)
+    {
+        return productEntities.Select(ToDto).ToList();
+    }
 }

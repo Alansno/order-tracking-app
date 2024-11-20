@@ -17,14 +17,6 @@ public class OrderTrackingContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ProductEntity>()
-            .HasQueryFilter(p => !p.IsDeleted);
-        
-        modelBuilder.Entity<PackageEntity>()
-            .HasQueryFilter(p => !p.IsDeleted);
-        
-        modelBuilder.Entity<ShippingEntity>()
-            .HasQueryFilter(p => !p.IsDeleted);
 
         modelBuilder.Entity<DeliveryManEntity>()
             .HasMany(d => d.Shipping)
@@ -37,14 +29,12 @@ public class OrderTrackingContext : DbContext
             .HasMany(p => p.Product)
             .WithOne(p => p.Package)
             .HasForeignKey(p => p.PackageId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<ShippingEntity>()
             .HasMany(s => s.Package)
             .WithOne(s => s.Shipping)
             .HasForeignKey(s => s.ShippingId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<CityEntity>()
@@ -71,5 +61,13 @@ public class OrderTrackingContext : DbContext
         modelBuilder.Entity<PackageEntity>()
             .HasIndex(p => p.Code)
             .IsUnique();
+        
+        modelBuilder.Entity<ShippingEntity>()
+            .Property(s => s.DeliveryManId)
+            .IsRequired(false);
+        
+        modelBuilder.Entity<PackageEntity>()
+            .Property(s => s.ShippingId)
+            .IsRequired(false); 
     }
 }

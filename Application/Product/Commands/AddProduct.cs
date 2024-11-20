@@ -17,16 +17,16 @@ public class AddProduct
         _productMapper = productMapper;
     }
 
-    public async Task<Result<bool>> Execute(ProductRequest request)
+    public async Task<Result<ProductResponse>> Execute(ProductRequest request)
     {
         var product = _productMapper.ToEntity(request);
         var productSaved = await _productRepository.Save(product);
 
         if (productSaved.IsSuccess)
         {
-            return Result<bool>.Success(true);
+            return Result<ProductResponse>.Success(_productMapper.ToDto(productSaved.Value));
         }
         
-        return Result<bool>.Failure(productSaved.Error, productSaved.StatusCode);
+        return Result<ProductResponse>.Failure(productSaved.Error, productSaved.StatusCode);
     }
 }

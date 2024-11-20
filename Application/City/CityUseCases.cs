@@ -4,5 +4,6 @@ namespace Application.City;
 
 public record class CityUseCases(
     AddCity AddCity,
-    GetCities GetCities
+    GetCities GetCities,
+    GetCity GetCity
     );

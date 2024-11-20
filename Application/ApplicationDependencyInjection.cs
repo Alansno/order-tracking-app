@@ -16,6 +16,10 @@ using Application.Package.Mappers;
 using Application.Product;
 using Application.Product.Commands;
 using Application.Product.Mappers;
+using Application.Shipping;
+using Application.Shipping.Commands;
+using Application.Shipping.Mappers;
+using Application.Shipping.Services;
 
 namespace Application
 {
@@ -25,11 +29,13 @@ namespace Application
             => services.AddDeliveryManUsesCases().AddDeliveryManMappers()
                 .AddPackageUseCases().AddPackageMappers()
                 .AddCityUseCases().AddCityMappers()
-                .AddProductUseCases().AddProductMappers();
+                .AddProductUseCases().AddProductMappers()
+                .AddShippingUseCases().AddShippingMappers();
         
         private static IServiceCollection AddDeliveryManUsesCases(this IServiceCollection services)
             => services.AddScoped<DeliveryManUseCases>()
-                .AddScoped<AddDeliveryMan>();
+                .AddScoped<AddDeliveryMan>()
+                .AddScoped<GetDeliveryManWith>();
         
         private static IServiceCollection AddPackageUseCases(this IServiceCollection services)
             => services.AddScoped<PackageUseCases>()
@@ -39,12 +45,20 @@ namespace Application
         private static IServiceCollection AddCityUseCases(this IServiceCollection services)
             => services.AddScoped<CityUseCases>()
                 .AddScoped<AddCity>()
-                .AddScoped<GetCities>();
+                .AddScoped<GetCities>()
+                .AddScoped<GetCity>();
         
         private static IServiceCollection AddProductUseCases(this IServiceCollection services)
             => services.AddScoped<ProductUseCases>()
                 .AddScoped<AddProduct>()
-                .AddScoped<GetProducts>();
+                .AddScoped<GetProducts>()
+                .AddScoped<AddPackageInProduct>()
+                .AddScoped<GetProduct>();
+        
+        private static IServiceCollection AddShippingUseCases(this IServiceCollection services)
+            => services.AddScoped<ShippingUseCases>()
+                .AddScoped<AddShipping>()
+                .AddScoped<AssignShipmentService>();
 
         private static IServiceCollection AddDeliveryManMappers(this IServiceCollection services)
             => services.AddScoped<DeliveryManMapper>();
@@ -58,5 +72,7 @@ namespace Application
         private static IServiceCollection AddProductMappers(this IServiceCollection services)
             => services.AddScoped<ProductMapper>();
 
+        private static IServiceCollection AddShippingMappers(this IServiceCollection services)
+            => services.AddScoped<ShippingMapper>();
     }
 }

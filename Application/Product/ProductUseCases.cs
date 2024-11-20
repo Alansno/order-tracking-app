@@ -4,5 +4,7 @@ namespace Application.Product;
 
 public record class ProductUseCases(
     AddProduct AddProduct,
-    GetProducts GetProducts
+    GetProducts GetProducts,
+    AddPackageInProduct AddPackageInProduct,
+    GetProduct GetProduct
     );

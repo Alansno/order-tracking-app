@@ -47,9 +47,13 @@ public class CityRepository : IRepository<CityEntity>
         throw new NotImplementedException();
     }
 
-    public Task<Result<CityEntity>> FindById(int id)
+    public async Task<Result<CityEntity>> FindById(int id)
     {
-        throw new NotImplementedException();
+        var city = await _context.Cities.FindAsync(id);
+        if (city == null)
+            return Result<CityEntity>.Failure("City not found", System.Net.HttpStatusCode.NotFound);
+
+        return Result<CityEntity>.Success(city);
     }
 
     public IQueryable<CityEntity> GetAll()

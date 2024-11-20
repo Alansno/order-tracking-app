@@ -1,3 +1,4 @@
+using System.Net;
 using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Custom.ResultPattern;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class ProductRepository : IRepository<ProductEntity>
+public class ProductRepository : IRepository<ProductEntity>, IProductRepository
 {
     private readonly OrderTrackingContext _context;
 
@@ -47,13 +48,41 @@ public class ProductRepository : IRepository<ProductEntity>
         throw new NotImplementedException();
     }
 
-    public Task<Result<ProductEntity>> FindById(int id)
+    public async Task<Result<ProductEntity>> FindById(int id)
     {
-        throw new NotImplementedException();
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            return Result<ProductEntity>.Failure("Product not found", System.Net.HttpStatusCode.NotFound);
+        }
+
+        return Result<ProductEntity>.Success(product);
     }
 
     public IQueryable<ProductEntity> GetAll()
     {
         return _context.Products;
+    }
+    
+    public async Task<Result<ProductEntity>> UpdateProduct(int packageId, int productId)
+    {
+        var product = await FindById(productId);
+        if (product.IsSuccess)
+        {
+            if (product.Value.PackageId == packageId)
+            {
+                return Result<ProductEntity>
+                    .Failure("The product has already been assigned that package", HttpStatusCode.Conflict);
+            }
+            product.Value.PackageId = packageId;
+            product.Value.UpdatedAt = DateTime.Now;
+            
+            _context.Entry(product.Value).Property(p => p.PackageId).IsModified = true;
+            _context.Entry(product.Value).Property(p => p.UpdatedAt).IsModified = true;
+
+            return Result<ProductEntity>.Success(product.Value);
+        }
+
+        return Result<ProductEntity>.Failure(product.Error, product.StatusCode);
     }
 }
