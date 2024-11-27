@@ -3,6 +3,7 @@ using Application.Package.Dtos;
 using Application.Package.Mappers;
 using Dapper;
 using Domain.Entities;
+using Domain.Querys;
 using Infrastructure.Custom.ResultPattern;
 using Infrastructure.Repositories.IRepositories;
 using Microsoft.Data.SqlClient;
@@ -13,30 +14,23 @@ namespace Application.Package.Commands;
 
 public class GetPackages
 {
-    private readonly IRepository<PackageEntity> _packageRepository;
+    private readonly IPackageRepository _packageRepository;
     private readonly PackageMapper _mapper;
-    private readonly IConfiguration _config;
 
-    public GetPackages(IRepository<PackageEntity> packageRepository, PackageMapper mapper, IConfiguration config)
+    public GetPackages(IPackageRepository packageRepository, PackageMapper mapper)
     {
         _packageRepository = packageRepository;
         _mapper = mapper;
-        _config = config;
     }
 
-    public async Task<Result<List<PackageResponse>>> Execute()
+    public async Task<Result<List<PackageQuery>>> Execute()
     {
-        var connectionString = _config.GetConnectionString("Connection");
-        await using var connection = new SqlConnection(connectionString);
-
-        var sql = @"SELECT p.Id, p.Code, c.CityName FROM Packages p LEFT JOIN Shippings s ON s.Id = p.ShippingId JOIN Cities c ON c.Id = p.CityId";
-        var result = await connection.QueryAsync<PackageResponse>(sql);
-
-        if (result.Any())
+        var packages = await _packageRepository.GetPackages();
+        if (!packages.IsSuccess)
         {
-            return Result<List<PackageResponse>>.Success(result.ToList());
+            return Result<List<PackageQuery>>.Failure("No packages found", HttpStatusCode.NotFound);
         }
-    
-        return Result<List<PackageResponse>>.Failure("No packages found", HttpStatusCode.NotFound);
+
+        return Result<List<PackageQuery>>.Success(packages.Value.ToList());
     }
 }

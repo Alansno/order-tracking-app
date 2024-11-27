@@ -20,19 +20,16 @@ public class GetProducts
         _config = config;
     }
 
-    public async Task<Result<IEnumerable<ProductResponse>>> Execute()
+    public async Task<Result<List<ProductResponse>>> Execute()
     {
-        var connectionString = _config.GetConnectionString("Connection");
-        await using var connection = new SqlConnection(connectionString);
+        var products = await _productRepository.GetAll().Where(p => p.PackageId == null)
+            .Select(p => new ProductResponse { Id = p.Id, NameProduct = p.NameProduct, Package = p.Package}).ToListAsync();
 
-        var sql = @"SELECT p.Id, p.NameProduct FROM Products p WHERE PackageId IS NULL";
-        var products = await connection.QueryAsync<ProductResponse>(sql);
-        Console.WriteLine(products.ToString());
-        if (products.Count() != 0)
+        if (products.Count == 0)
         {
-            return Result<IEnumerable<ProductResponse>>.Success(products.ToList());
+            return Result<List<ProductResponse>>.Failure("No products found", HttpStatusCode.NotFound);
         }
-        
-        return Result<IEnumerable<ProductResponse>>.Failure("No products found", HttpStatusCode.NotFound);
+
+        return Result<List<ProductResponse>>.Success(products);
     }
 }

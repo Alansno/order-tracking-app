@@ -11,14 +11,16 @@ namespace Application.Product.Commands;
 public class AddPackageInProduct
 {
     private readonly IProductRepository _productRepository;
+    private readonly IRepository<PackageEntity> _packageRepository;
     private readonly OrderTrackingContext _context;
     private readonly ProductMapper _productMapper;
 
-    public AddPackageInProduct(IProductRepository productRepository, ProductMapper productMapper, OrderTrackingContext context)
+    public AddPackageInProduct(IProductRepository productRepository, ProductMapper productMapper, OrderTrackingContext context, IRepository<PackageEntity> packageRepository)
     {
         _productRepository = productRepository;
         _productMapper = productMapper;
         _context = context;
+        _packageRepository = packageRepository;
     }
 
     public async Task<Result<List<ProductResponse>>> Execute(List<UpdateProductRequest> products)
@@ -26,6 +28,12 @@ public class AddPackageInProduct
         var productsUpdated = new List<ProductEntity>();
         foreach (var product in products)
         {
+            var packageExist = await _packageRepository.FindById(product.PackageId);
+            if (!packageExist.IsSuccess)
+            {
+                return Result<List<ProductResponse>>.Failure(packageExist.Error, packageExist.StatusCode);
+            }
+            
             var res  = await _productRepository.UpdateProduct(product.PackageId, product.ProductId);
             if (!res.IsSuccess)
             {

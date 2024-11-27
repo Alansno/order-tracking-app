@@ -5,5 +5,5 @@ namespace Infrastructure.Repositories.IRepositories;
 
 public interface IDeliveryManRepository
 {
-    Task<Result<bool>> ChangeAvailability(DeliveryManEntity deliveryMan);
+    Task<Result<bool>> ChangeAvailability(DeliveryManEntity deliveryMan, bool condition);
 }

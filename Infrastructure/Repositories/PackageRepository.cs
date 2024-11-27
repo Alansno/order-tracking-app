@@ -1,6 +1,9 @@
 using System.Data;
 using System.Linq.Expressions;
+using System.Net;
+using Dapper;
 using Domain.Entities;
+using Domain.Querys;
 using Infrastructure.Context;
 using Infrastructure.Custom.ResultPattern;
 using Infrastructure.Repositories.IRepositories;
@@ -12,10 +15,11 @@ namespace Infrastructure.Repositories;
 public class PackageRepository : IRepository<PackageEntity>, ISearchRepository<PackageEntity>, IPackageRepository
 {
     private readonly OrderTrackingContext _context;
-
-    public PackageRepository(OrderTrackingContext context)
+    private readonly DapperContext _dapperContext;
+    public PackageRepository(OrderTrackingContext context, DapperContext dapperContext)
     {
         _context = context;
+        _dapperContext = dapperContext;
     }
     
     public async Task<Result<PackageEntity>> Save(PackageEntity model)
@@ -50,9 +54,15 @@ public class PackageRepository : IRepository<PackageEntity>, ISearchRepository<P
         throw new NotImplementedException();
     }
 
-    public Task<Result<PackageEntity>> FindById(int id)
+    public async Task<Result<PackageEntity>> FindById(int id)
     {
-        throw new NotImplementedException();
+        var package = await _context.Packages.FindAsync(id);
+        if (package == null)
+        {
+            return Result<PackageEntity>.Failure("Package not found", System.Net.HttpStatusCode.NotFound);
+        }
+
+        return Result<PackageEntity>.Success(package);
     }
 
     public IQueryable<PackageEntity> GetAll()
@@ -80,5 +90,19 @@ public class PackageRepository : IRepository<PackageEntity>, ISearchRepository<P
         _context.Entry(packageEntity).Property(p => p.UpdatedAt).IsModified = true;
         await _context.SaveChangesAsync();
         return Result<bool>.Success(true);
+    }
+
+    public async Task<Result<IEnumerable<PackageQuery>>> GetPackages()
+    {
+        var sql = @"SELECT p.Id, p.Code, c.CityName FROM Packages p LEFT JOIN Shippings s ON s.Id = p.ShippingId JOIN Cities c ON c.Id = p.CityId";
+        using var connection = _dapperContext.GetConnection();
+        var result = (await connection.QueryAsync<PackageQuery>(sql)).ToList();
+    
+        if (result.Count() == 0)
+        {
+            return Result<IEnumerable<PackageQuery>>.Failure("No packages found", HttpStatusCode.NotFound);
+        }
+
+        return Result<IEnumerable<PackageQuery>>.Success(result);
     }
 }

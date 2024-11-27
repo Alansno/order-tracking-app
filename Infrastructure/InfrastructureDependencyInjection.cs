@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Infrastructure.Context;
 
 namespace Infrastructure
 {
@@ -15,7 +16,7 @@ namespace Infrastructure
         public static IServiceCollection AddRepositories(this IServiceCollection services)
             => services.AddDeliveryManRepository().AddPackageRepository()
                 .AddCityRepository().AddProductRepository()
-                .AddShippingRepository();
+                .AddShippingRepository().AddDapperContext();
 
         private static IServiceCollection AddDeliveryManRepository(this IServiceCollection services)
             => services.AddScoped<IRepository<DeliveryManEntity>, DeliveryManRepository>()
@@ -38,5 +39,8 @@ namespace Infrastructure
             => services.AddScoped<IRepository<ShippingEntity>, ShippingRepository>()
                 .AddScoped<IShippingRepository, ShippingRepository>()
                 .AddScoped<ISearchRepository<ShippingEntity>, ShippingRepository>();
+
+        private static IServiceCollection AddDapperContext(this IServiceCollection services)
+            => services.AddScoped<DapperContext>();
     }
 }

@@ -79,9 +79,9 @@ public class DeliveryManRepository : IRepository<DeliveryManEntity>, ISearchRepo
         return Result<IQueryable<DeliveryManEntity>>.Success(deliveriesMan);
     }
 
-    public async Task<Result<bool>> ChangeAvailability(DeliveryManEntity deliveryMan)
+    public async Task<Result<bool>> ChangeAvailability(DeliveryManEntity deliveryMan, bool condition)
     {
-        deliveryMan.Availability = false;
+        deliveryMan.Availability = condition;
         _context.Entry(deliveryMan).Property(d => d.Availability).IsModified = true;
         await _context.SaveChangesAsync();
         return Result<bool>.Success(true);

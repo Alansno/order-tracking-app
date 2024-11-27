@@ -62,7 +62,7 @@ public class AssignShipmentService
             return Result<bool>.Failure(shipment.Error, shipment.StatusCode);
         }
 
-        var deliveryManNotAvailable = await _deliveryManRepository.ChangeAvailability(deliveryManActive);
+        var deliveryManNotAvailable = await _deliveryManRepository.ChangeAvailability(deliveryManActive, false);
         if (!deliveryManNotAvailable.IsSuccess)
         {
             return Result<bool>.Failure(deliveryManNotAvailable.Error, deliveryManNotAvailable.StatusCode);

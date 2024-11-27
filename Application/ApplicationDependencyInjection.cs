@@ -58,7 +58,8 @@ namespace Application
         private static IServiceCollection AddShippingUseCases(this IServiceCollection services)
             => services.AddScoped<ShippingUseCases>()
                 .AddScoped<AddShipping>()
-                .AddScoped<AssignShipmentService>();
+                .AddScoped<AssignShipmentService>()
+                .AddScoped<ShipmentDelivered>();
 
         private static IServiceCollection AddDeliveryManMappers(this IServiceCollection services)
             => services.AddScoped<DeliveryManMapper>();

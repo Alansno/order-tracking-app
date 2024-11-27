@@ -79,4 +79,14 @@ public class ShippingRepository : IRepository<ShippingEntity>, ISearchRepository
         await _context.SaveChangesAsync();
         return Result<ShippingEntity>.Success(shippingEntity);
     }
+
+    public async Task<Result<ShippingEntity>> ShipmentDeliveredUpdated(ShippingEntity shippingEntity)
+    {
+        shippingEntity.Status = "Entregado";
+        shippingEntity.DeliveryDate = DateTime.Now;
+        _context.Entry(shippingEntity).Property(s => s.Status).IsModified = true;
+        _context.Entry(shippingEntity).Property(s => s.DeliveryDate).IsModified = true;
+        await _context.SaveChangesAsync();
+        return Result<ShippingEntity>.Success(shippingEntity);
+    }
 }

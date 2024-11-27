@@ -22,7 +22,7 @@ public class ShippingMapper
             Id = shippingEntity.Id,
             Origin = shippingEntity.Origin,
             Status = shippingEntity.Status,
-            CityName = shippingEntity.City.CityName
+            DeliveryDate = shippingEntity.DeliveryDate,
         };
     }
 }
